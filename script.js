@@ -24,45 +24,62 @@
     [0,4,8], [2,4,6]
   ];
 
-  // --- Render function ---
+  // --- Render the board and status ---
+  // update render() to add pop animation and aria updates
   function render() {
-    // update each cell
     const cells = boardElem.querySelectorAll('.cell');
     cells.forEach(cell => {
       const i = Number(cell.dataset.index);
-      cell.textContent = board[i] || '';
-      cell.classList.toggle('x', board[i] === 'X');
-      cell.classList.toggle('o', board[i] === 'O');
-      cell.disabled = !!board[i] || gameOver;
-      // remove win highlight (set later if winner)
+      const prev = cell.textContent || '';
+      const now = board[i] || '';
+      // set text and classes
+      cell.textContent = now;
+      cell.classList.toggle('x', now === 'X');
+      cell.classList.toggle('o', now === 'O');
+      cell.disabled = !!now || gameOver;
       cell.classList.remove('win');
+
+      // if newly placed (prev empty & now filled) add pop then remove
+      if (!prev && now) {
+        cell.classList.add('pop');
+        // remove pop after animation ends (safety timeout)
+        setTimeout(() => cell.classList.remove('pop'), 300);
+      }
     });
 
-    // check winner or draw
+    // winner/draw handling (same as before) but update aria & status class
     const winnerInfo = calculateWinner(board);
     if (winnerInfo) {
       const { winner, line } = winnerInfo;
       statusElem.textContent = `Winner: ${winner}`;
-      // highlight the winning cells
+      statusElem.classList.add('winner');
+      statusElem.setAttribute('aria-live', 'assertive'); // force announcement
       line.forEach(i => {
         const winCell = boardElem.querySelector(`.cell[data-index="${i}"]`);
-        if (winCell) winCell.classList.add('win');
+        if (winCell) {
+          winCell.classList.add('win');
+          // for screen readers, add descriptive aria-label
+          winCell.setAttribute('aria-label', `Winning cell ${i+1}, ${winner} wins`);
+        }
       });
       gameOver = true;
-      // disable all cells explicitly
       boardElem.querySelectorAll('.cell').forEach(c => c.disabled = true);
       return;
     }
 
-    // draw?
+    // if draw
     if (board.every(Boolean)) {
       statusElem.textContent = "It's a draw!";
+      statusElem.classList.remove('winner');
       gameOver = true;
+      statusElem.setAttribute('aria-live', 'assertive');
       return;
     }
 
     // normal state
+    statusElem.classList.remove('winner');
     statusElem.textContent = `Turn: ${xIsNext ? 'X' : 'O'}`;
+    statusElem.setAttribute('aria-live', 'polite');
   }
 
   // --- Event handler for cell click ---
@@ -77,7 +94,7 @@
     // if vsAI is on and it's now O's turn (AI plays 'O'), trigger AI
     if (!gameOver && vsAI && !xIsNext) {
       // small delay for UX
-      setTimeout(aiMove, 250);
+      scheduleAI();
     }
   }
 
@@ -93,11 +110,54 @@
   }
 
   // --- Reset game ---
+  // soft confirm on reset to avoid accidental restart
   function resetGame() {
-    board = Array(9).fill(null);
-    xIsNext = true;
-    gameOver = false;
-    render();
+    // remove any previous animations/state
+    boardElem.classList.remove('flash');
+    // force reflow so adding class again will retrigger animation reliably
+    // eslint-disable-next-line no-unused-expressions
+    void boardElem.offsetWidth;
+
+    // add flash class to trigger per-cell animation
+    boardElem.classList.add('flash');
+
+    const FLASH_DURATION_MS = 600; // must match CSS animation duration (600ms)
+
+    // after animation finishes, clear board state and UI
+    setTimeout(() => {
+        // clear logical board
+        board = Array(9).fill(null);
+        xIsNext = true;
+        gameOver = false;
+
+        // clear UI cells and reset aria labels
+        boardElem.querySelectorAll('.cell').forEach((c, i) => {
+        c.textContent = '';
+        c.disabled = false;
+        c.classList.remove('x', 'o', 'win', 'pop');
+        c.removeAttribute('aria-current'); // if used previously
+        c.setAttribute('aria-label', `Ô ${i+1}`);
+        });
+
+        // remove flash class so future resets can re-trigger
+        boardElem.classList.remove('flash');
+
+        // update status & announce
+        if (statusElem) {
+        statusElem.textContent = `Turn: ${xIsNext ? 'X' : 'O'}`;
+        statusElem.setAttribute('aria-live', 'polite');
+        statusElem.classList.remove('winner');
+        }
+
+        render(); // re-render to ensure UI state is consistent
+    }, FLASH_DURATION_MS + 20); // small buffer to ensure animation done
+  }
+
+  // smoother AI delay: use requestAnimationFrame to schedule with slight delay
+  function scheduleAI() {
+    // 220ms wait better UX; use setTimeout still, but clear existing timers if needed
+    if (typeof window._aiTimeout !== 'undefined') clearTimeout(window._aiTimeout);
+    window._aiTimeout = setTimeout(aiMove, 220);
   }
 
   // --- Simple AI for 'O' ---

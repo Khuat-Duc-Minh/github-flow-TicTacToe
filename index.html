@@ -9,22 +9,22 @@
 <body>
   <main class="container">
     <h1>Tic Tac Toe</h1>
-    <div id="status" class="status" aria-live="polite">Turn: X</div>
+    <div id="status" class="status" aria-live="polite" aria-atomic="true">Turn: X</div>
 
     <div id="board" class="board" role="grid" aria-label="Bàn Tic Tac Toe">
-      <button class="cell" data-index="0" aria-label="Ô 1"></button>
-      <button class="cell" data-index="1" aria-label="Ô 2"></button>
-      <button class="cell" data-index="2" aria-label="Ô 3"></button>
-      <button class="cell" data-index="3" aria-label="Ô 4"></button>
-      <button class="cell" data-index="4" aria-label="Ô 5"></button>
-      <button class="cell" data-index="5" aria-label="Ô 6"></button>
-      <button class="cell" data-index="6" aria-label="Ô 7"></button>
-      <button class="cell" data-index="7" aria-label="Ô 8"></button>
-      <button class="cell" data-index="8" aria-label="Ô 9"></button>
+      <button class="cell" data-index="0" aria-label="Ô 1, hàng 1 cột 1" aria-posinset="1" aria-setsize="9"></button>
+      <button class="cell" data-index="1" aria-label="Ô 2, hàng 1 cột 2" aria-posinset="2" aria-setsize="9"></button>
+      <button class="cell" data-index="2" aria-label="Ô 3, hàng 1 cột 3" aria-posinset="3" aria-setsize="9"></button>
+      <button class="cell" data-index="3" aria-label="Ô 4, hàng 2 cột 1" aria-posinset="4" aria-setsize="9"></button>
+      <button class="cell" data-index="4" aria-label="Ô 5, hàng 2 cột 2" aria-posinset="5" aria-setsize="9"></button>
+      <button class="cell" data-index="5" aria-label="Ô 6, hàng 2 cột 3" aria-posinset="6" aria-setsize="9"></button>
+      <button class="cell" data-index="6" aria-label="Ô 7, hàng 3 cột 1" aria-posinset="7" aria-setsize="9"></button>
+      <button class="cell" data-index="7" aria-label="Ô 8, hàng 3 cột 2" aria-posinset="8" aria-setsize="9"></button>
+      <button class="cell" data-index="8" aria-label="Ô 9, hàng 3 cột 3" aria-posinset="9" aria-setsize="9"></button>
     </div>
 
     <div class="controls">
-      <button id="resetBtn">Reset</button>
+      <button id="resetBtn" aria-label="Reset trò chơi">Reset</button>
       <button id="aiBtn">Play vs AI</button>
     </div>
   </main>

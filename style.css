@@ -148,3 +148,59 @@ button#resetBtn, button#aiBtn{
 @media (prefers-reduced-motion: reduce) {
   .board.flash .cell { animation: none; background-color: rgba(255,245,200,0.6); }
 }
+
+/* ------------------------------
+   Animations & visual polish
+   ------------------------------ */
+
+/* placement pop animation for newly placed marks */
+@keyframes place-pop {
+  0%   { transform: scale(0.6); opacity: 0; filter: blur(1px); }
+  60%  { transform: scale(1.08); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1); opacity: 1; filter: none; }
+}
+
+/* win pulse */
+@keyframes win-pulse {
+  0%   { box-shadow: 0 6px 18px rgba(255,191,0,0.06); transform: translateY(0); }
+  50%  { box-shadow: 0 18px 36px rgba(255,191,0,0.18); transform: translateY(-4px); }
+  100% { box-shadow: 0 6px 18px rgba(255,191,0,0.06); transform: translateY(0); }
+}
+
+/* cell flash on reset (600ms) - handled per cell via .board.flash .cell */
+@keyframes cell-flash {
+  0%   { background-color: rgba(255, 250, 200, 0.95); transform: scale(1.02); }
+  50%  { background-color: rgba(255, 235, 120, 1); transform: scale(1.04); }
+  100% { background-color: transparent; transform: scale(1); }
+}
+
+/* Add pop class for placement */
+.cell.pop {
+  animation: place-pop 260ms cubic-bezier(.2,.9,.3,1) both;
+}
+
+/* Win class animation */
+.cell.win {
+  animation: win-pulse 800ms ease-in-out infinite;
+  background: linear-gradient(90deg,#fff7e6,#fff0c2);
+}
+
+/* Board flash triggers per-cell animation (600ms) */
+.board.flash .cell {
+  animation: cell-flash 600ms ease-out forwards;
+}
+
+/* Optional: slight hover/active for cells for better tactile feel */
+.cell:hover:not([disabled]) {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 18px rgba(11,103,255,0.04);
+}
+
+/* Sound button visual */
+#soundBtn[aria-pressed="true"] { box-shadow: 0 6px 18px rgba(11,103,255,0.06); }
+#soundBtn[aria-pressed="false"] { opacity: 0.7; filter: grayscale(.2); }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .cell.pop, .cell.win, .board.flash .cell, .cell:hover { animation: none; transform: none; }
+}

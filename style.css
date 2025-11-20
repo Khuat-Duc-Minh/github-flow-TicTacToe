@@ -67,3 +67,84 @@ button#resetBtn, button#aiBtn{
   .container{padding:14px}
   .cell{font-size:2rem}
 }
+
+/* --- polish: animations, focus, and micro-UX --- */
+
+/* subtle pop animation when a mark appears */
+@keyframes pop {
+  0% { transform: scale(0.6); opacity: 0; }
+  60% { transform: scale(1.08); opacity: 1; }
+  100% { transform: scale(1); }
+}
+
+/* smooth transition for text & background */
+.cell{
+  transition: transform 0.12s ease, background 0.18s ease, box-shadow 0.12s ease, color 0.12s ease;
+  will-change: transform, background;
+}
+
+/* apply pop when class 'pop' is added (JS will toggle) */
+.cell.pop {
+  animation: pop 220ms cubic-bezier(.2,.9,.3,1);
+}
+
+/* focus style (high contrast, visible for keyboard users) */
+.cell:focus {
+  outline: 3px solid rgba(11,103,255,0.18);
+  outline-offset: 3px;
+  box-shadow: 0 6px 18px rgba(11,103,255,0.08);
+}
+
+/* winning highlight: stronger background + gentle pulse */
+.cell.win {
+  background: linear-gradient(90deg,#fff7e6,#fff0c2);
+  box-shadow: 0 8px 24px rgba(255,191,0,0.14);
+  transform: translateY(-2px);
+}
+
+/* status message emphasis */
+.status {
+  transition: color .12s ease;
+}
+.status.winner { color: #b45f00; font-weight:700; }
+
+/* small improvements for controls */
+.controls button {
+  transition: transform .08s ease, box-shadow .08s ease;
+}
+.controls button:active { transform: translateY(1px); }
+
+/* reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .cell { transition: none; animation: none; }
+}
+
+/* --- cell flash effect on reset --- */
+
+/* flash animation for individual cells: change background color then fade back */
+@keyframes cell-flash {
+  0%   { background-color: rgba(255, 245, 200, 0.95); transform: scale(1.02); }
+  50%  { background-color: rgba(255, 230, 120, 1); transform: scale(1.04); }
+  100% { background-color: transparent; transform: scale(1); }
+}
+
+/* When .board has .flash, animate each .cell for 600ms */
+.board.flash .cell {
+  animation: cell-flash 600ms ease-out forwards;
+}
+
+/* Optional: small stagger so flash looks nicer (remove if you want them simultaneous) */
+.board.flash .cell:nth-child(1){ animation-delay: 0ms; }
+.board.flash .cell:nth-child(2){ animation-delay: 30ms; }
+.board.flash .cell:nth-child(3){ animation-delay: 60ms; }
+.board.flash .cell:nth-child(4){ animation-delay: 90ms; }
+.board.flash .cell:nth-child(5){ animation-delay: 120ms; }
+.board.flash .cell:nth-child(6){ animation-delay: 150ms; }
+.board.flash .cell:nth-child(7){ animation-delay: 180ms; }
+.board.flash .cell:nth-child(8){ animation-delay: 210ms; }
+.board.flash .cell:nth-child(9){ animation-delay: 240ms; }
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .board.flash .cell { animation: none; background-color: rgba(255,245,200,0.6); }
+}

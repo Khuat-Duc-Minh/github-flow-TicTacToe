@@ -1,0 +1,69 @@
+:root{
+  --bg:#f6f8fa;
+  --card:#fff;
+  --accent:#0b67ff;
+  --text:#222;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:system-ui,Segoe UI,Roboto,"Helvetica Neue",Arial;
+  background:var(--bg);
+  color:var(--text);
+  display:flex;
+  min-height:100vh;
+  align-items:center;
+  justify-content:center;
+}
+
+.container{
+  background:var(--card);
+  padding:18px;
+  border-radius:10px;
+  box-shadow:0 6px 18px rgba(0,0,0,0.06);
+  width:100%;
+  max-width:420px;
+  text-align:center;
+}
+
+h1{margin:0 0 8px;font-size:1.4rem}
+.status{margin-bottom:12px;font-weight:600}
+
+.board{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin:0 auto 14px;
+  max-width:320px;
+}
+
+.cell{
+  width:100%;
+  aspect-ratio:1/1;
+  font-size:2.3rem;
+  border-radius:8px;
+  border:2px solid rgba(0,0,0,0.06);
+  background:linear-gradient(180deg,#fff,#f8f9fb);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.cell:active{transform:scale(.98)}
+.cell[disabled]{cursor:not-allowed;opacity:.9}
+
+.cell.x{color:var(--accent)}
+.cell.o{color:#ff4d6d}
+
+.controls{display:flex;gap:8px;justify-content:center}
+button#resetBtn, button#aiBtn{
+  padding:8px 12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);background:var(--card);cursor:pointer;
+}
+
+/* responsive */
+@media (max-width:420px){
+  .container{padding:14px}
+  .cell{font-size:2rem}
+}
